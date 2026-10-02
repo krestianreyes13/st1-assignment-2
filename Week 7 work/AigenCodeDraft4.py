@@ -54,7 +54,8 @@ class Patient:
         else:
             self._contact_details = contact_details.strip()
 
-lass Practitioner:
+
+class Practitioner:
     def __init__(self, practitioner_id: str, name: str,
                  specialty: str) -> None:
         self._practitioner_id = required_text(
@@ -96,6 +97,12 @@ class Appointment:
         self._appointment_id = required_text(
             appointment_id, "appointment_id"
         )
+
+        if not isinstance(patient, Patient):
+            raise TypeError("patient must be a Patient")
+
+        if not isinstance(practitioner, Practitioner):
+            raise TypeError("practitioner must be a Practitioner")
 
         if not isinstance(scheduled_at, datetime):
             raise TypeError("scheduled_at must be a datetime")
@@ -139,11 +146,16 @@ class Appointment:
     def reschedule(self, new_time: datetime) -> None:
         if not isinstance(new_time, datetime):
             raise TypeError("The new time must be a datetime")
+        elif self._status != AppointmentStatus.SCHEDULED:
+            raise InvalidStatusTransitionError(
+                "Only scheduled appointments can be rescheduled"
+            )
         else:
             self._scheduled_at = new_time
 
     def send_reminder(self) -> str:
         return "Reminder sent"
+
 
 def ask_text(prompt: str, is_name: bool = False) -> str:
     while True:
@@ -173,7 +185,6 @@ def ask_time() -> datetime:
             print("Please try again, for example: 2026-10-05 09:30\n")
         else:
             return booking_time
-
 
 def main() -> None:
     print("Create a patient")
@@ -243,7 +254,6 @@ def main() -> None:
         except (TypeError, ValueError) as error:
             print(error)
             print("Please choose another action.")
-
 
 if __name__ == "__main__":
     try:

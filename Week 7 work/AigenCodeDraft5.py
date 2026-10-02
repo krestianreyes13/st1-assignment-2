@@ -1,5 +1,3 @@
-"""SmartCare staged AI first draft for the Stage 4 review exercise."""
-
 from datetime import datetime
 from enum import Enum
 
@@ -100,6 +98,12 @@ class Appointment:
             appointment_id, "appointment_id"
         )
 
+        if not isinstance(patient, Patient):
+            raise TypeError("patient must be a Patient")
+
+        if not isinstance(practitioner, Practitioner):
+            raise TypeError("practitioner must be a Practitioner")
+
         if not isinstance(scheduled_at, datetime):
             raise TypeError("scheduled_at must be a datetime")
 
@@ -142,9 +146,12 @@ class Appointment:
     def reschedule(self, new_time: datetime) -> None:
         if not isinstance(new_time, datetime):
             raise TypeError("The new time must be a datetime")
+        elif self._status != AppointmentStatus.SCHEDULED:
+            raise InvalidStatusTransitionError(
+                "Only scheduled appointments can be rescheduled"
+            )
         else:
             self._scheduled_at = new_time
-
 
 
 def ask_text(prompt: str, is_name: bool = False) -> str:
@@ -175,7 +182,6 @@ def ask_time() -> datetime:
             print("Please try again, for example: 2026-10-05 09:30\n")
         else:
             return booking_time
-
 
 def main() -> None:
     print("Create a patient")
@@ -245,7 +251,6 @@ def main() -> None:
         except (TypeError, ValueError) as error:
             print(error)
             print("Please choose another action.")
-
 
 if __name__ == "__main__":
     try:

@@ -24,6 +24,7 @@ def required_name(value: str) -> str:
     else:
         raise ValueError("Name must contain at least one letter")
 
+
 class Patient:
     def __init__(self, patient_id: str, name: str,
                  contact_details: str = "") -> None:
@@ -97,6 +98,12 @@ class Appointment:
             appointment_id, "appointment_id"
         )
 
+        if not isinstance(patient, Patient):
+            raise TypeError("patient must be a Patient")
+
+        if not isinstance(practitioner, Practitioner):
+            raise TypeError("practitioner must be a Practitioner")
+
         if not isinstance(scheduled_at, datetime):
             raise TypeError("scheduled_at must be a datetime")
 
@@ -145,6 +152,7 @@ class Appointment:
     def send_reminder(self) -> str:
         return "Reminder sent"
 
+
 def ask_text(prompt: str, is_name: bool = False) -> str:
     while True:
         value = input(prompt)
@@ -173,7 +181,6 @@ def ask_time() -> datetime:
             print("Please try again, for example: 2026-10-05 09:30\n")
         else:
             return booking_time
-
 
 def main() -> None:
     print("Create a patient")
@@ -243,7 +250,6 @@ def main() -> None:
         except (TypeError, ValueError) as error:
             print(error)
             print("Please choose another action.")
-
 
 if __name__ == "__main__":
     try:
