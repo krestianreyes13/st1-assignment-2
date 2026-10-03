@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
-
+# This section imports datetime to work with appointment dates and times,
+# and Enum to define the possible appointment statuses.
 
 def required_text(value: str, field: str) -> str:
     if not isinstance(value, str):
@@ -9,7 +10,8 @@ def required_text(value: str, field: str) -> str:
         raise ValueError(f"{field} must not be blank")
     else:
         return value.strip()
-
+# This function checks that a value is text and is not blank.
+# It removes extra spaces from the beginning and end.
 
 def required_name(value: str) -> str:
     value = required_text(value, "Name")
@@ -23,7 +25,8 @@ def required_name(value: str) -> str:
         return value
     else:
         raise ValueError("Name must contain at least one letter")
-
+# This function checks that a name is valid text
+# and contains at least one letter.
 
 class Patient:
     def __init__(self, patient_id: str, name: str,
@@ -53,7 +56,8 @@ class Patient:
             raise TypeError("contact_details must be text")
         else:
             self._contact_details = contact_details.strip()
-
+# This class represents a patient. It holds their ID, name and contact details.
+# It has methods to get these details and update the name and contact details.
 
 class Practitioner:
     def __init__(self, practitioner_id: str, name: str,
@@ -78,18 +82,29 @@ class Practitioner:
 
     def update_specialty(self, specialty: str) -> None:
         self._specialty = required_text(specialty, "specialty")
-
+# This class represents a practitioner. It holds their ID, name and specialty.
+# It has methods to get these details and update the name and specialty.
 
 class AppointmentStatus(Enum):
     SCHEDULED = "scheduled"
     CANCELLED = "cancelled"
     COMPLETED = "completed"
-
+# This enum defines the three possible appointment statuses:
+# scheduled, cancelled and completed.
 
 class InvalidStatusTransitionError(ValueError):
     pass
+# This class defines a custom error for appointment actions
+# that are not allowed because of the current status.
 
 
+# This class represents an appointment. It holds the appointment ID,
+# patient, practitioner, scheduled date and time, and status.
+# It checks that the patient and practitioner are valid objects.
+# Its methods allow the appointment to be viewed, cancelled or completed.
+# Only scheduled appointments can be rescheduled.
+# Cancelled or completed appointments cannot change status again,
+# and changing scheduled to scheduled is also rejected.
 class Appointment:
     def __init__(self, appointment_id: str, patient: Patient,
                  practitioner: Practitioner,
@@ -155,7 +170,8 @@ class Appointment:
         else:
             self._scheduled_at = new_time
 
-
+# This function asks the user to enter text and checks that it is valid.
+# If the input is invalid, it displays an error and asks again.
 def ask_text(prompt: str, is_name: bool = False) -> str:
     while True:
         value = input(prompt)
@@ -171,7 +187,8 @@ def ask_text(prompt: str, is_name: bool = False) -> str:
         else:
             return value
 
-
+# This function asks the user for a date and time in YYYY-MM-DD HH:MM format.
+# It converts valid input into a datetime value and asks again if invalid.
 def ask_time() -> datetime:
     while True:
         value = input("Date and time (YYYY-MM-DD HH:MM): ")
@@ -184,6 +201,12 @@ def ask_time() -> datetime:
             print("Please try again, for example: 2026-10-05 09:30\n")
         else:
             return booking_time
+
+# This function runs the program. It asks the user to create a patient,
+# practitioner and appointment, then displays a menu.
+# The menu lets the user view the appointment, update names,
+# reschedule, cancel, complete the appointment or exit.
+# It displays an error message when an action is not allowed.
 
 def main() -> None:
     print("Create a patient")
@@ -259,3 +282,5 @@ if __name__ == "__main__":
         main()
     except (EOFError, KeyboardInterrupt):
         print("\nInput ended. Goodbye.")
+# This section starts the program when this file is run directly.
+# It displays a goodbye message if input ends.
